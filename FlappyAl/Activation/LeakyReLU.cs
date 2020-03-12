@@ -30,7 +30,7 @@ namespace FlappyAl
             {
                 var val = input[i];
                 var derivative = val < 0 ? Leakyness : 1;
-                output[i] = derivative;// * val;
+                output[i] = derivative * val;
             }
         }
     }

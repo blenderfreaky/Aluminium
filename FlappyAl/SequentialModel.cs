@@ -53,8 +53,8 @@ namespace FlappyAl
             {
                 var layer = Layers[i];
 
-                if (actualOutput != null && i != Layers.Count - 1) vectors[i + 1] = ArraySource(layer.OutputSize);
-                else vectors[i + 1] = actualOutput!;
+                if (actualOutput == null || i != Layers.Count - 1) vectors[i + 1] = ArraySource(layer.OutputSize);
+                else vectors[i + 1] = actualOutput;
 
                 layer.Evaluate(vectors[i], vectors[i + 1]);
             }
@@ -82,19 +82,17 @@ namespace FlappyAl
             foreach (var layer in Layers) layer.UseTraining();
         }
 
-        public double Train(double[][] inputs, double[][] outputs, int batchSize, double learningRate, IErrorFunction errorFunction, Action<double> callback)
+        public double Train(Func<(double[] Input, double[] ExpectedOutput)> dataSource, int batchSize, int sampleSize, double learningRate, IErrorFunction errorFunction, Action<double> callback)
         {
             var meanError = 0d;
 
-            var rng = new Random();
-
             for (int i = 0; i < batchSize; i++)
             {
-                var index = rng.Next(0, inputs.Length);
+                var (input, expectedOutput) = dataSource();
 
-                meanError += Train(inputs[index], outputs[index], null, learningRate, errorFunction) / meanError;
+                meanError += Train(input, expectedOutput, null, learningRate, errorFunction);
 
-                if (i % 10 == 0) UseTraining();
+                if (i % sampleSize == 0) UseTraining();
 
                 callback(meanError / (i + 1));
             }

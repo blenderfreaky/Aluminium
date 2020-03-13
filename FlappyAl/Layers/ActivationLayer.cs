@@ -1,4 +1,6 @@
-﻿namespace FlappyAl
+﻿using Aluminium.Activation;
+
+namespace Aluminium.Layers
 {
     public class ActivationLayer : ILayer
     {

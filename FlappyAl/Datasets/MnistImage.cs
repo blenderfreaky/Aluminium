@@ -1,4 +1,4 @@
-﻿namespace FlappyAl.Datasets
+﻿namespace Aluminium.Datasets
 {
     public class MnistImage
     {

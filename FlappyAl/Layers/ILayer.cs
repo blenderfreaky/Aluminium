@@ -1,4 +1,4 @@
-﻿namespace FlappyAl
+﻿namespace Aluminium.Layers
 {
     public interface ILayer
     {

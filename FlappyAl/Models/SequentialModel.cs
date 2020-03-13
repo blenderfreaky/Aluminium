@@ -1,5 +1,7 @@
-﻿namespace FlappyAl
+﻿namespace Aluminium.Models
 {
+    using Aluminium.Error;
+    using Aluminium.Layers;
     using System;
     using System.Collections.Generic;
 

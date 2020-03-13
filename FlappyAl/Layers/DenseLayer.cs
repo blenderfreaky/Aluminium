@@ -1,5 +1,6 @@
-﻿namespace FlappyAl
+﻿namespace Aluminium.Layers
 {
+    using Activation;
     using System;
 
     public class DenseLayer : ILayer
@@ -7,10 +8,10 @@
         public int InputSize { get; }
         public int OutputSize { get; }
 
-        public double[,] Weights { get; private set; }
-        private double[,] WeightsAltBuffer { get; set; }
+        private double[,] Weights { get; }
+        private double[,] WeightsAltBuffer { get; }
 
-        public DenseLayer(int inputSize, int outputSize, Func<int, int, double> weightsInitializer = null)
+        public DenseLayer(int inputSize, int outputSize, Func<int, int, double>? weightsInitializer = null)
         {
             InputSize = inputSize;
             OutputSize = outputSize;
@@ -41,7 +42,13 @@
         {
             InputSize = inputSize;
             OutputSize = outputSize;
+
+            if (Weights.GetLength(0) != InputSize) throw new ArgumentException($"Expected 2d array of x-size {InputSize}.", nameof(Weights));
+            if (Weights.GetLength(1) != OutputSize) throw new ArgumentException($"Expected 2d array of y-size {OutputSize}.", nameof(Weights));
+
             Weights = weights;
+            WeightsAltBuffer = new double[InputSize, OutputSize];
+            Array.Copy(Weights, WeightsAltBuffer, Weights.Length);
         }
 
         public void Evaluate(double[] input, double[] output)

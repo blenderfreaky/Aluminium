@@ -1,7 +1,10 @@
-﻿namespace FlappyAl.CLI
+﻿namespace Aluminium.CLI
 {
-    using FlappyAl.Datasets;
-    using FlappyAl.Error;
+    using Aluminium.Activation;
+    using Aluminium.Datasets;
+    using Aluminium.Error;
+    using Aluminium.Layers;
+    using Aluminium.Models;
     using System;
     using System.Linq;
 

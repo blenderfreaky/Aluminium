@@ -1,6 +1,6 @@
-﻿namespace FlappyAl.Datasets
+﻿namespace Aluminium.Datasets
 {
-    using FlappyAl.Properties;
+    using Aluminium.Properties;
     using System;
     using System.Collections.Generic;
     using System.IO;

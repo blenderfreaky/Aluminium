@@ -1,4 +1,4 @@
-﻿namespace FlappyAl
+﻿namespace Aluminium.Error
 {
     public interface IErrorFunction
     {

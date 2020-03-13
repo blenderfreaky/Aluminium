@@ -1,4 +1,4 @@
-﻿namespace FlappyAl.Error
+﻿namespace Aluminium.Error
 {
     using System;
 

@@ -1,4 +1,4 @@
-﻿namespace FlappyAl
+﻿namespace Aluminium.Activation
 {
     public interface IActivationFunction
     {

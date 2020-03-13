@@ -19,7 +19,7 @@
             }
         }
 
-        public void Derivative(double[] input, double[] output)
+        public void Deactivate(double[] input, double[] output)
         {
             if (input.Length != output.Length) throw new ArgumentException("Must be same size as " + nameof(input) + ".", nameof(output));
 

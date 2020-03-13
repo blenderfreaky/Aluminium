@@ -16,7 +16,7 @@
                 accumulator += absoluteError * absoluteError;
             }
 
-            return accumulator / expected.Length;
+            return accumulator;
         }
 
         public double Derivative(double[] expected, double[] actual, double[] derivative)
@@ -34,7 +34,7 @@
                 accumulator += absoluteError * absoluteError;
             }
 
-            return accumulator / expected.Length;
+            return accumulator;
         }
     }
 }

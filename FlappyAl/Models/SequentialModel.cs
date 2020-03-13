@@ -4,6 +4,7 @@
     using Aluminium.Layers;
     using System;
     using System.Collections.Generic;
+    using System.Threading.Tasks;
 
     public delegate double[] ArraySource(int length);
 
@@ -83,19 +84,32 @@
             foreach (var layer in Layers) layer.UseTraining();
         }
 
-        public double Train(Func<(double[] Input, double[] ExpectedOutput)> dataSource, int batchSize, int sampleSize, double learningRate, IErrorFunction errorFunction, Action<int, double> callback)
+        public double Train(
+            Func<(double[] Input, double[] ExpectedOutput)> dataSource,
+            int batchSize, int sampleSize,
+            double learningRate,
+            IErrorFunction errorFunction,
+            Action<int, double, double?>? callback = null,
+            Func<double[], double[], double>? metric = null)
         {
+            var actualOutput = new double[OutputSize];
             var meanError = 0d;
 
             for (int i = 0; i < batchSize; i++)
             {
-                var (input, expectedOutput) = dataSource();
+                var totalMetric = 0d;
 
-                meanError += Train(input, expectedOutput, null, learningRate, errorFunction);
+                Parallel.For(0, sampleSize, j =>
+                {
+                    var (input, expectedOutput) = dataSource();
 
-                if (i % sampleSize == 0) UseTraining();
+                    meanError += Train(input, expectedOutput, actualOutput, learningRate, errorFunction);
 
-                callback(i, meanError / (i + 1));
+                    totalMetric += metric?.Invoke(expectedOutput, actualOutput) ?? double.NaN;
+                });
+
+                UseTraining();
+                callback?.Invoke(i, meanError / (i + 1), double.IsNaN(totalMetric) ? (double?)null : totalMetric / sampleSize);
             }
 
             return meanError / batchSize;

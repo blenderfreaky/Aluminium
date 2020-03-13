@@ -47,45 +47,56 @@
 
             var rng = new Random();
 
-            model.Train(() => mnistTrain[rng.Next(0, mnistTrain.Length - 1)], 10000, 10, 10.0d,
-                new MeanSquareError(), (i, error) => Console.WriteLine("[" + i + "] Error: " + error));
+            model.Train(
+                dataSource: () => mnistTrain[rng.Next(0, mnistTrain.Length - 1)],
+                batchSize: 60000,
+                sampleSize: 50,
+                learningRate: 0.1d,
+                errorFunction: new MeanSquareError(),
+                callback: (i, error, metric) => Console.WriteLine("[" + i + "] (" + (metric * 100d)?.ToString("0.00") + "%) Error: " + error),
+                metric: (expected, actual) =>
+                {
+                    if (expected.Length == 0) throw new ArgumentException("Expected array to be non-empty.", nameof(expected));
+                    if (expected.Length != actual.Length) throw new ArgumentException("Expected array of same size as " + nameof(expected) + ".", nameof(actual));
+
+                    var maxExpected = 0;
+                    var maxActual = 0;
+
+                    for (int i = 1; i < expected.Length; i++)
+                    {
+                        if (expected[i] > expected[maxExpected]) maxExpected = i;
+                        if (actual[i] > actual[maxActual]) maxActual = i;
+                    }
+
+                    return maxExpected == maxActual ? 1 : 0;
+                });
         }
 
         private static void AdditionTest()
         {
             var model = new SequentialModel(
-                            new DenseLayer(3, 5),
-                            new ActivationLayer(new LeakyReLU(0.5), 5),
-                            new DenseLayer(5, 1)
+                            new DenseLayer(3, 1)
+                            //new ActivationLayer(new LeakyReLU(0.5), 5),
+                            //new DenseLayer(5, 1)
+                            //new ActivationLayer(new LeakyReLU(-0.5), 1)
                             );
 
             var rng = new Random();
 
             var errorFunction = new MeanSquareError();
 
-            var weightedMeanError = 0d;
-
-            for (int i = 0; i < 100000; i++)
-            {
-                var rng0 = rng.NextDouble() * 10;
-                var rng1 = rng.NextDouble() * 10;
-                var rng2 = rng.NextDouble() * 10;
-
-                double[] input = new double[] { rng0, rng1, rng2 };
-                double[] expectedOutput = new double[] { rng0 + rng1 + rng2 };
-                double[] actualOutput = new double[1];
-
-                var error = model.Train(input, expectedOutput, actualOutput, 0.00001, errorFunction);
-
-                weightedMeanError = (weightedMeanError * 0.9) + (error * 0.1);
-
-                if (i % 1 == 0) model.UseTraining();
-
-                Console.WriteLine("Error: " + error + " Weighted Mean: " + weightedMeanError);
-                //Console.WriteLine("In: " + string.Join(", ", input));
-                //Console.WriteLine("Out (Expected): " + string.Join(", ", expectedOutput));
-                //Console.WriteLine("Out (Actual): " + string.Join(", ", actualOutput));
-            }
+            model.Train(
+                dataSource: () => {
+                    var a = rng.NextDouble() * 10;
+                    var b = rng.NextDouble() * 10;
+                    var c = rng.NextDouble() * 10;
+                    return (new double[] { a, b, c }, new double[] { a + b + c });
+                },
+                batchSize: 10000,
+                sampleSize: 100,
+                learningRate: 0.0001d,
+                errorFunction: new MeanSquareError(),
+                callback: (i, error, _) => Console.WriteLine("[" + i + "] Error: " + error));
         }
     }
 }

@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Text;
-
-namespace FlappyAl.Datasets
+﻿namespace FlappyAl.Datasets
 {
     public class MnistImage
     {

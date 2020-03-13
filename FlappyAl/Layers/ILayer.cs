@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace FlappyAl
+﻿namespace FlappyAl
 {
     public interface ILayer
     {

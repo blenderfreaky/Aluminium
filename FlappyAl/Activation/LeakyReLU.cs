@@ -1,9 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace FlappyAl
+﻿namespace FlappyAl
 {
+    using System;
 
     public class LeakyReLU : IActivationFunction
     {

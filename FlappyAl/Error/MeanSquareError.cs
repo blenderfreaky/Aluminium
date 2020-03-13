@@ -1,9 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace FlappyAl.Error
+﻿namespace FlappyAl.Error
 {
+    using System;
+
     public class MeanSquareError : IErrorFunction
     {
         public double Evaluate(double[] expected, double[] actual)

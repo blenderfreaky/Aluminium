@@ -1,9 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace FlappyAl
+﻿namespace FlappyAl
 {
+    using System;
+
     public class DenseLayer : ILayer
     {
         public int InputSize { get; }
@@ -84,7 +82,7 @@ namespace FlappyAl
                     accumulator += outputErrorSignal[j] * Weights[i, j];
 
                     var errorGradient = outputErrorSignal[j] * inputs[i];
-                    WeightsAltBuffer[i, j] += learningRate * errorGradient;
+                    WeightsAltBuffer[i, j] -= learningRate * errorGradient;
                 }
 
                 inputErrorSignal[i] = accumulator;

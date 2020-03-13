@@ -1,9 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace FlappyAl
+﻿namespace FlappyAl
 {
+    using System;
+    using System.Collections.Generic;
+
     public delegate double[] ArraySource(int length);
 
     public class SequentialModel
@@ -82,7 +81,7 @@ namespace FlappyAl
             foreach (var layer in Layers) layer.UseTraining();
         }
 
-        public double Train(Func<(double[] Input, double[] ExpectedOutput)> dataSource, int batchSize, int sampleSize, double learningRate, IErrorFunction errorFunction, Action<double> callback)
+        public double Train(Func<(double[] Input, double[] ExpectedOutput)> dataSource, int batchSize, int sampleSize, double learningRate, IErrorFunction errorFunction, Action<int, double> callback)
         {
             var meanError = 0d;
 
@@ -94,7 +93,7 @@ namespace FlappyAl
 
                 if (i % sampleSize == 0) UseTraining();
 
-                callback(meanError / (i + 1));
+                callback(i, meanError / (i + 1));
             }
 
             return meanError / batchSize;

@@ -1,14 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace FlappyAl
+﻿namespace FlappyAl
 {
+    using System;
 
-    public class TanH : IActivationFunction
+    public class Sigmoid : IActivationFunction
     {
-        public TanH() { }
-
         public void Evaluate(double[] input, double[] output)
         {
             if (input.Length != output.Length) throw new ArgumentException("Must be same size as " + nameof(input) + ".", nameof(output));
@@ -27,9 +22,8 @@ namespace FlappyAl
             for (int i = 0; i < input.Length; i++)
             {
                 var val = input[i];
-                //var computed = 1d / (1d + Math.Exp(-val));
                 var derivative = val * (1d - val);
-                output[i] = derivative;// * val;
+                output[i] = derivative * val;
             }
         }
     }

@@ -1,10 +1,10 @@
-﻿using FlappyAl.Datasets;
-using FlappyAl.Error;
-using System;
-using System.Linq;
-
-namespace FlappyAl.CLI
+﻿namespace FlappyAl.CLI
 {
+    using FlappyAl.Datasets;
+    using FlappyAl.Error;
+    using System;
+    using System.Linq;
+
     static class Program
     {
         static void Main(string[] args)
@@ -19,7 +19,7 @@ namespace FlappyAl.CLI
                 new DenseLayer(784, 800),
                 new ActivationLayer(new LeakyReLU(0.5), 800),
                 new DenseLayer(800, 10),
-                new ActivationLayer(new TanH(), 10)
+                new ActivationLayer(new Sigmoid(), 10)
                 );
 
             var mnistTrain = MnistReader.ReadTrainingData()
@@ -44,8 +44,8 @@ namespace FlappyAl.CLI
 
             var rng = new Random();
 
-            model.Train(() => mnistTrain[rng.Next(0, mnistTrain.Length - 1)], 10000, 50, 0.0001d,
-                new MeanSquareError(), error => Console.WriteLine("Error: " + error));
+            model.Train(() => mnistTrain[rng.Next(0, mnistTrain.Length - 1)], 10000, 10, 10.0d,
+                new MeanSquareError(), (i, error) => Console.WriteLine("[" + i + "] Error: " + error));
         }
 
         private static void AdditionTest()

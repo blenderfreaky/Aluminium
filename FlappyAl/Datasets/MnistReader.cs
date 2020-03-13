@@ -1,11 +1,10 @@
-﻿using FlappyAl.Properties;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Text;
-
-namespace FlappyAl.Datasets
+﻿namespace FlappyAl.Datasets
 {
+    using FlappyAl.Properties;
+    using System;
+    using System.Collections.Generic;
+    using System.IO;
+
     public static class MnistReader
     {
         public static IEnumerable<MnistImage> ReadTrainingData()

@@ -20,7 +20,7 @@
             {
                 var rng = new Random();
                 _ = rng; // To silence the compiler
-                weightsInitializer = (_, __) => ((rng.NextDouble() * 2) - 1) * 1;
+                weightsInitializer = (_, __) => ((rng.NextDouble() * 2) - 1) / 100d;
             }
 
             Weights = new double[InputSize, OutputSize];
@@ -89,7 +89,7 @@
                     accumulator += outputErrorSignal[j] * Weights[i, j];
 
                     var errorGradient = outputErrorSignal[j] * inputs[i];
-                    WeightsAltBuffer[i, j] += learningRate * errorGradient;
+                    ParallelizationHelper.Add(ref Weights[i, j], learningRate * errorGradient);
                 }
 
                 inputErrorSignal[i] = accumulator;
@@ -98,7 +98,7 @@
 
         public void UseTraining()
         {
-            Array.Copy(WeightsAltBuffer, Weights, Weights.Length);
+            //Array.Copy(WeightsAltBuffer, Weights, Weights.Length);
         }
     }
 }

@@ -16,7 +16,7 @@
                 accumulator += absoluteError * absoluteError;
             }
 
-            return accumulator;
+            return accumulator / expected.Length;
         }
 
         public double Derivative(double[] expected, double[] actual, double[] derivative)
@@ -29,12 +29,12 @@
             for (int i = 0; i < expected.Length; i++)
             {
                 var absoluteError = expected[i] - actual[i];
-                derivative[i] = absoluteError;
+                derivative[i] = 2 * absoluteError;
 
                 accumulator += absoluteError * absoluteError;
             }
 
-            return accumulator;
+            return accumulator / expected.Length;
         }
     }
 }

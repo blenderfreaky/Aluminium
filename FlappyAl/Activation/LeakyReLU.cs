@@ -19,15 +19,19 @@
             }
         }
 
-        public void Deactivate(double[] input, double[] output)
+        public void Deactivate(double[] inputs, double[] outputs, double[] outputErrorSignal, double[] inputErrorSignal)
         {
-            if (input.Length != output.Length) throw new ArgumentException("Must be same size as " + nameof(input) + ".", nameof(output));
+            if (outputs.Length != inputs.Length) throw new ArgumentException("Must be same size as " + nameof(inputs) + ".", nameof(outputs));
+            if (outputErrorSignal.Length != inputs.Length) throw new ArgumentException("Must be same size as " + nameof(inputs) + ".", nameof(outputErrorSignal));
+            if (inputErrorSignal.Length != inputs.Length) throw new ArgumentException("Must be same size as " + nameof(inputs) + ".", nameof(inputErrorSignal));
 
-            for (int i = 0; i < input.Length; i++)
+            for (int i = 0; i < outputErrorSignal.Length; i++)
             {
-                var val = input[i];
-                var derivative = val < 0 ? Leakyness : 1;
-                output[i] = derivative * val;
+                var errorSignal = outputErrorSignal[i];
+                var input = inputs[i];
+
+                var derivative = input < 0 ? Leakyness : 1;
+                inputErrorSignal[i] = derivative * errorSignal;
             }
         }
     }

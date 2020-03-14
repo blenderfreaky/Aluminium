@@ -2,7 +2,7 @@
 {
     public interface IActivationFunction
     {
-        void Evaluate(double[] input, double[] output);
-        void Deactivate(double[] input, double[] output);
+        void Evaluate(double[] inputs, double[] outputs);
+        void Deactivate(double[] inputs, double[] outputs, double[] outputErrorSignal, double[] inputErrorSignal);
     }
 }

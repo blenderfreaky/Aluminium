@@ -4,6 +4,7 @@
     using Aluminium.Layers;
     using System;
     using System.Collections.Generic;
+    using System.Threading;
     using System.Threading.Tasks;
 
     public delegate double[] ArraySource(int length);
@@ -86,33 +87,36 @@
 
         public double Train(
             Func<(double[] Input, double[] ExpectedOutput)> dataSource,
-            int batchSize, int sampleSize,
+            int epochs, int batchSize,// int sampleSize,
             double learningRate,
             IErrorFunction errorFunction,
             Action<int, double, double?>? callback = null,
             Func<double[], double[], double>? metric = null)
         {
             var actualOutput = new double[OutputSize];
-            var meanError = 0d;
 
-            for (int i = 0; i < batchSize; i++)
+            for (int i = 0; i < epochs; i++)
             {
+                var meanError = 0d;
                 var totalMetric = 0d;
 
-                Parallel.For(0, sampleSize, j =>
+                Parallel.For(0, batchSize, _ =>
                 {
                     var (input, expectedOutput) = dataSource();
 
-                    meanError += Train(input, expectedOutput, actualOutput, learningRate, errorFunction);
+                    ParallelizationHelper.Add(ref meanError, Train(input, expectedOutput, actualOutput, learningRate, errorFunction));
 
                     totalMetric += metric?.Invoke(expectedOutput, actualOutput) ?? double.NaN;
                 });
 
                 UseTraining();
-                callback?.Invoke(i, meanError / (i + 1), double.IsNaN(totalMetric) ? (double?)null : totalMetric / sampleSize);
+                callback?.Invoke(i,
+                    meanError / batchSize,
+                    double.IsNaN(totalMetric) ? (double?)null : totalMetric / batchSize
+                    );
             }
 
-            return meanError / batchSize;
+            return 0;// meanError / (epochs * batchSize);
         }
     }
 }

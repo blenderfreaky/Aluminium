@@ -1,10 +1,14 @@
 ﻿namespace Aluminium.CLI
 {
     using Aluminium.Activation;
+    using Aluminium.CLI.Properties;
     using Aluminium.Datasets;
     using Aluminium.Error;
     using Aluminium.Layers;
     using Aluminium.Models;
+    using SFML.Graphics;
+    using SFML.System;
+    using SFML.Window;
     using System;
     using System.Linq;
 
@@ -20,7 +24,8 @@
         {
             var model = new SequentialModel(
                 new DenseLayer(784, 800),
-                new ActivationLayer(new LeakyReLU(0.5), 800),
+                //new ActivationLayer(new Sigmoid(), 800),
+                new ActivationLayer(new LeakyReLU(0.5d), 800),
                 new DenseLayer(800, 10),
                 new ActivationLayer(new Sigmoid(), 10)
                 );
@@ -34,7 +39,7 @@
                     {
                         for (int j = 0; j < mnistImage.Width; j++)
                         {
-                            image[(i * mnistImage.Width) + j] = mnistImage.Image[i, j];
+                            image[(i * mnistImage.Width) + j] = mnistImage.Image[i, j] / 255d;
                         }
                     }
 
@@ -46,14 +51,31 @@
                 }).ToArray();
 
             var rng = new Random();
+            (double[] Input, double[] ExpectedOutput) dataSource() => mnistTrain[rng.Next(0, mnistTrain.Length - 1)];
+
+            //using var window = new RenderWindow(new VideoMode(600, 600), "Map");
+            //window.Clear(Color.Black);
+            //var (exampleInput, exampleExpectedOutput) = dataSource();
+            //var img = new Image(28, 28);
+            //for (uint i = 0; i < 28; i++)
+            //{
+            //    for (uint j = 0; j < 28; j++)
+            //    {
+            //        var brightness = (byte)(exampleInput[(j * 28) + i] * 255d);
+            //        img.SetPixel(i, j, new Color(brightness, brightness, brightness));
+            //    }
+            //}
+            //window.Draw(new Sprite(new Texture(img)) { Scale = new Vector2f(600 / 28f, 600 / 28f) });
+            //window.Draw(new Text("Actual: " + Array.IndexOf(exampleExpectedOutput, 1), new Font(Resources.Arial)));
+            //window.Display();
 
             model.Train(
-                dataSource: () => mnistTrain[rng.Next(0, mnistTrain.Length - 1)],
-                batchSize: 60000,
-                sampleSize: 50,
-                learningRate: 0.1d,
+                dataSource: dataSource,
+                epochs: 60000,
+                batchSize: 1000,
+                learningRate: 0.001d,
                 errorFunction: new MeanSquareError(),
-                callback: (i, error, metric) => Console.WriteLine("[" + i + "] (" + (metric * 100d)?.ToString("0.00") + "%) Error: " + error),
+                callback: (i, error, metric) => Console.WriteLine("[" + i.ToString().PadLeft(5) + "] (" + (metric * 100d)?.ToString("0.00").PadLeft(6) + "%) Error: " + error),
                 metric: (expected, actual) =>
                 {
                     if (expected.Length == 0) throw new ArgumentException("Expected array to be non-empty.", nameof(expected));
@@ -76,9 +98,6 @@
         {
             var model = new SequentialModel(
                             new DenseLayer(3, 1)
-                            //new ActivationLayer(new LeakyReLU(0.5), 5),
-                            //new DenseLayer(5, 1)
-                            //new ActivationLayer(new LeakyReLU(-0.5), 1)
                             );
 
             var rng = new Random();
@@ -86,14 +105,15 @@
             var errorFunction = new MeanSquareError();
 
             model.Train(
-                dataSource: () => {
+                dataSource: () =>
+                {
                     var a = rng.NextDouble() * 10;
                     var b = rng.NextDouble() * 10;
                     var c = rng.NextDouble() * 10;
                     return (new double[] { a, b, c }, new double[] { a + b + c });
                 },
-                batchSize: 10000,
-                sampleSize: 100,
+                epochs: 10000,
+                batchSize: 1000,
                 learningRate: 0.0001d,
                 errorFunction: new MeanSquareError(),
                 callback: (i, error, _) => Console.WriteLine("[" + i + "] Error: " + error));

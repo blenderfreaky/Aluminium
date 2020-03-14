@@ -26,7 +26,7 @@ namespace Aluminium.Layers
             double[] outputErrorSignal, double[] inputErrorSignal,
             double learningRate)
         {
-            ActivationFunction.Deactivate(outputErrorSignal, inputErrorSignal);
+            ActivationFunction.Deactivate(inputs, outputs, outputErrorSignal, inputErrorSignal);
         }
 
         public void UseTraining() { }
